@@ -10,6 +10,10 @@ screen = pygame.display.set_mode([screenX, screenY])
 pygame.display.set_caption("Sanrio Island")
 clock = pygame.time.Clock()
 
+#taustapilt
+taustapilt=pygame.image.load("pilt.png")
+pygae.mixer.init()
+
 gameover=False
 aeg=pygame.time.get_ticks()
 while not gameover:
