@@ -40,15 +40,16 @@ while running:
     '''taustapilt=pygame.image.load("pilt.png")
     pygame.mixer.init()'''
 
-
     for i in pygame.event.get():
         screen.fill([255, 255, 255])
 
-        # Kuvan tegelase taustale
+        # Kuvan Kitty taustale (tuleks lõpuks teha nii, et tegelast saab valida)
         screen.blit(kitty_pilt, (x, y))
+
+        #Mängu sulgemine ristist
         if i.type == pygame.QUIT:
             running = False
-            # Kui sündmuseks on klahvi allavajutamine…
+        # Kui sündmuseks on klahvi allavajutamine…
         elif i.type == pygame.KEYDOWN:
             if i.key == pygame.K_UP: #Kitty ei oska alla tagasi tulla :(
                 screen.fill([255, 255, 255])
