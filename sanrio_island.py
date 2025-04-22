@@ -11,6 +11,7 @@ running=True
 pygame.display.set_caption("Sanrio Island")
 clock = pygame.time.Clock()
 
+
 #Tegelane Kitty
 kitty_pilt=pygame.image.load('kitty.png')
 kitty_pilt=pygame.transform.scale(kitty_pilt,(100,100))
@@ -32,8 +33,9 @@ kuromi_liigub=pygame.transform.scale(kuromi_liigub, (100,100))
 #Alguskoordinadid
 x=200
 y=600
-samm=5
+samm=10
 
+# Et  liigutamiseks ei peaks pidevalt vajutama, kasutan klahvi allhoidmise kontrolli
 pygame.key.set_repeat(1,10)
 while running:
     # taustapilt
@@ -64,6 +66,12 @@ while running:
                 x = x - samm
             elif i.key == pygame.K_RIGHT:
                 x = x + samm'''
+    if not pygame.event.get():
+        if y <= 600:
+            y = y + 5
+        screen.fill([255, 255, 255])
+        screen.blit(kitty_pilt, (x, y))
+
 
         clock.tick(60)
         pygame.display.flip()
