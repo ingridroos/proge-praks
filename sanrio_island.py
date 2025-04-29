@@ -34,7 +34,7 @@ kuromi_liigub=pygame.transform.scale(kuromi_liigub, (100,100))
 #Alguskoordinadid
 x=200
 y=600
-samm=5
+samm=10
 
 pygame.key.set_repeat(1,10)
 while running:
@@ -60,12 +60,12 @@ while running:
             elif i.key == pygame.K_DOWN:
                 screen.blit(taustapilt,(0, 0))
                 screen.blit(kitty_liigub, (x, y))
-            #Järgnevas peame tausta panema liikuma, mitte tegelase,
-            # aga Grete pole pilti veel teinud mulle mida liigutada >:(
-            '''elif i.key == pygame.K_LEFT:
-                x = x - samm
-            elif i.key == pygame.K_RIGHT:
-                x = x + samm'''
+
+        if not pygame.event.get():
+            if y<= 600:
+                y= y+5
+            screen.blit(taustapilt,(0, 0))
+            screen.blit(kitty_pilt, (x, y))
 
         clock.tick(60)
         pygame.display.flip()
