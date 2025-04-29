@@ -62,12 +62,7 @@ while running:
             elif i.key == pygame.K_DOWN:
                 screen.blit(taustapilt,(0, 0))
                 screen.blit(kitty_liigub, (x, y))
-            #Järgnevas peame tausta panema liikuma, mitte tegelase,
-            # aga Grete pole pilti veel teinud mulle mida liigutada >:(
-            '''elif i.key == pygame.K_LEFT:
-                x = x - samm
-            elif i.key == pygame.K_RIGHT:
-                x = x + samm'''
+
     if not pygame.event.get():
         if y <= 600:
             y = y + 5
