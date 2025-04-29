@@ -36,38 +36,40 @@ kuromi_liigub=pygame.transform.scale(kuromi_liigub, (100,100))
 x=200
 y=600
 samm=10
+liigub=False
+
+# taustapilt
+taustapilt=pygame.image.load("background.png")
+screen.blit(taustapilt, (0, 0))
+
+# Kuvan Kitty taustale (tuleks lõpuks teha nii, et tegelast saab valida)
+screen.blit(kitty_pilt, (x, y))
 
 # Et  liigutamiseks ei peaks pidevalt vajutama, kasutan klahvi allhoidmise kontrolli
 pygame.key.set_repeat(1,10)
 while running:
-    # taustapilt
-    taustapilt=pygame.image.load("background.png")
-
-
     for i in pygame.event.get():
-        screen.blit(taustapilt,(0, 0))
-
-        # Kuvan Kitty taustale (tuleks lõpuks teha nii, et tegelast saab valida)
-        screen.blit(kitty_pilt, (x, y))
-
         #Mängu sulgemine ristist
         if i.type == pygame.QUIT:
             running = False
         # Kui sündmuseks on klahvi allavajutamine…
         elif i.type == pygame.KEYDOWN:
-            if i.key == pygame.K_UP: #Kitty ei oska alla tagasi tulla :(
-                screen.blit(taustapilt,(0, 0))
+            if i.key == pygame.K_UP:
                 y = y - samm
-                screen.blit(kitty_liigub, (x, y))
             elif i.key == pygame.K_DOWN:
-                screen.blit(taustapilt,(0, 0))
-                screen.blit(kitty_liigub, (x, y))
+                liigub=True
+            screen.blit(taustapilt, (0, 0))
+            screen.blit(kitty_liigub, (x, y))
 
     if not pygame.event.get():
-        if y <= 600:
+        if y < 600:
             y = y + 5
-        screen.fill([255, 255, 255])
-        screen.blit(kitty_pilt, (x, y))
+            screen.blit(taustapilt, (0, 0))
+            screen.blit(kitty_liigub, (x, y))
+        if y == 600 and liigub==False:
+            screen.blit(taustapilt, (0, 0))
+            screen.blit(kitty_pilt, (x, y)
+
 
 
         clock.tick(60)
