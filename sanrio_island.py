@@ -2,6 +2,7 @@
 
 import pygame, random
 pygame.init()
+pygame.mixer.init()
 
 # ekraani seaded
 screenX = 1200
@@ -11,6 +12,14 @@ running=True
 pygame.display.set_caption("Sanrio Island")
 clock = pygame.time.Clock()
 
+#Muusika
+muusika1=pygame.mixer.Sound('muusika1.mp3')
+muusika1.set_volume(0.6)
+muusika1.play()
+
+#Heli nupp
+mängib=True
+rect_x, rect_y, rect_width, rect_height = 10, 10, 100, 100
 
 #Tegelane Kitty
 kitty_pilt_flip=pygame.image.load('kitty.png')
@@ -39,8 +48,11 @@ samm=10
 liigub=False
 
 # taustapilt
+piltx=0
+pilty=0
+pilt2x=1200
 taustapilt=pygame.image.load("background.png")
-screen.blit(taustapilt, (0, 0))
+screen.blit(taustapilt, (piltx, pilty))
 
 # Kuvan Kitty taustale (tuleks lõpuks teha nii, et tegelast saab valida)
 screen.blit(kitty_pilt, (x, y))
@@ -58,19 +70,32 @@ while running:
                 y = y - samm
             elif i.key == pygame.K_DOWN:
                 liigub=True
-            screen.blit(taustapilt, (0, 0))
+            elif i.key == pygame.K_LEFT:
+                piltx=piltx + samm
+            elif i.key == pygame.K_RIGHT:
+                piltx=piltx - samm
+            screen.blit(taustapilt, (piltx, pilty))
             screen.blit(kitty_liigub, (x, y))
+        elif i.type == pygame.MOUSEBUTTONDOWN:
+            mouse_x, mouse_y = pygame.mouse.get_pos()
+            if(rect_x <= mouse_x <= rect_x + rect_width and rect_y <= mouse_y <= rect_y + rect_height):
+                if mängib == True:
+                    muusika1.set_volume(0)
+                    mängib=False
+                else:
+                    muusika1.set_volume(0.6)
+                    mängib=True
+
 
     if not pygame.event.get():
         if y < 600:
             y = y + 5
-            screen.blit(taustapilt, (0, 0))
+            screen.blit(taustapilt, (piltx, pilty))
             screen.blit(kitty_liigub, (x, y))
         if y == 600 and liigub==False:
-            screen.blit(taustapilt, (0, 0))
-            screen.blit(kitty_pilt, (x, y)
-
-
+            screen.blit(taustapilt, (piltx, pilty))
+            screen.blit(kitty_pilt, (x, y))
+        liigub = False
 
         clock.tick(60)
         pygame.display.flip()
