@@ -5,8 +5,8 @@ pygame.init()
 pygame.mixer.init()
 
 # ekraani seaded
-screenX = 1200
-screenY = 750
+screenX = 1000
+screenY = 144*1.5
 screen = pygame.display.set_mode([screenX, screenY])
 running=True
 pygame.display.set_caption("Sanrio Island")
@@ -23,10 +23,10 @@ rect_x, rect_y, rect_width, rect_height = 10, 10, 100, 100
 
 #Tegelane Kitty
 kitty_pilt_flip=pygame.image.load('kitty.png')
-kitty_pilt_flip=pygame.transform.scale(kitty_pilt_flip,(100,100))
+kitty_pilt_flip=pygame.transform.scale(kitty_pilt_flip,(50,50))
 kitty_pilt=pygame.transform.flip(kitty_pilt_flip,True,False)
 kitty_liigub_flip=pygame.image.load('kitty_walk.png')
-kitty_liigub_flip=pygame.transform.scale(kitty_liigub_flip, (100,100))
+kitty_liigub_flip=pygame.transform.scale(kitty_liigub_flip, (50,50))
 kitty_liigub=pygame.transform.flip(kitty_liigub_flip,True,False)
 
 #Tegelane Pochacco - flip puudu
@@ -43,15 +43,16 @@ kuromi_liigub=pygame.transform.scale(kuromi_liigub, (100,100))
 
 #Alguskoordinadid
 x=200
-y=600
+y=100
 samm=10
 liigub=False
 
 # taustapilt
 piltx=0
 pilty=0
-pilt2x=1200
+pilt2x=1500
 taustapilt=pygame.image.load("background.png")
+taustapilt=pygame.transform.scale(taustapilt, (1500,144*1.5))
 screen.blit(taustapilt, (piltx, pilty))
 
 # Kuvan Kitty taustale (tuleks lõpuks teha nii, et tegelast saab valida)
@@ -66,16 +67,24 @@ while running:
             running = False
         # Kui sündmuseks on klahvi allavajutamine…
         elif i.type == pygame.KEYDOWN:
+
             if i.key == pygame.K_UP:
-                y = y - samm
+                if y>5: #et ta ülevalt ekraanilt välja ei saaks
+                    y = y - samm
+
             elif i.key == pygame.K_DOWN:
                 liigub=True
+
             elif i.key == pygame.K_LEFT:
+                #if piltx==500 :
                 piltx=piltx + samm
+
             elif i.key == pygame.K_RIGHT:
                 piltx=piltx - samm
             screen.blit(taustapilt, (piltx, pilty))
+            screen.blit(taustapilt, (pilt2x, pilty))
             screen.blit(kitty_liigub, (x, y))
+
         elif i.type == pygame.MOUSEBUTTONDOWN:
             mouse_x, mouse_y = pygame.mouse.get_pos()
             if(rect_x <= mouse_x <= rect_x + rect_width and rect_y <= mouse_y <= rect_y + rect_height):
@@ -88,11 +97,11 @@ while running:
 
 
     if not pygame.event.get():
-        if y < 600:
+        if y < 140:
             y = y + 5
             screen.blit(taustapilt, (piltx, pilty))
             screen.blit(kitty_liigub, (x, y))
-        if y == 600 and liigub==False:
+        if y == 140 and liigub==False:
             screen.blit(taustapilt, (piltx, pilty))
             screen.blit(kitty_pilt, (x, y))
         liigub = False
