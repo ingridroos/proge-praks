@@ -17,10 +17,6 @@ muusika1=pygame.mixer.Sound('muusika1.mp3')
 muusika1.set_volume(0.6)
 muusika1.play()
 
-#Heli nupp
-mängib=True
-rect_x, rect_y, rect_width, rect_height = 10, 10, 100, 100
-
 #Tegelane Kitty
 kitty_pilt_flip=pygame.image.load('kitty.png')
 kitty_pilt_flip=pygame.transform.scale(kitty_pilt_flip,(50,50))
@@ -40,6 +36,14 @@ kuromi_pilt=pygame.image.load('kuromi.png')
 kuromi_pilt=pygame.transform.scale(kuromi_pilt, (100,100))
 kuromi_liigub=pygame.image.load('kuromi_walk.png')
 kuromi_liigub=pygame.transform.scale(kuromi_liigub, (100,100))
+
+#Heli nupp
+mängib=True
+rect_x, rect_y, rect_width, rect_height = 10, 10, 100, 100
+heli_on=pygame.image.load('on.png')
+heli_on=pygame.transform.scale(heli_on, (100, 100))
+heli_off=pygame.image.load('off.png')
+heli_off=pygame.transform.scale(heli_off, (100, 100))
 
 #Alguskoordinadid
 x=200
@@ -84,6 +88,7 @@ while running:
             screen.blit(taustapilt, (piltx, pilty))
             screen.blit(taustapilt, (pilt2x, pilty))
             screen.blit(kitty_liigub, (x, y))
+            screen.blit(heli_on, (10, 10))
 
         elif i.type == pygame.MOUSEBUTTONDOWN:
             mouse_x, mouse_y = pygame.mouse.get_pos()
@@ -91,9 +96,11 @@ while running:
                 if mängib == True:
                     muusika1.set_volume(0)
                     mängib=False
+                    screen.blit(heli_off, (10, 10))
                 else:
                     muusika1.set_volume(0.6)
                     mängib=True
+                    screen.blit(heli_on, (10, 10))
 
 
     if not pygame.event.get():
