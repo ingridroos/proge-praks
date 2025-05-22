@@ -1,3 +1,5 @@
+# sanrio_island.py - täiustatud versioon
+
 import pygame, random, time, sys
 pygame.init()
 pygame.mixer.init()
@@ -43,8 +45,45 @@ squid_pilt = pygame.transform.scale(pygame.image.load("squid.png"), (50, 50))
 
 font = pygame.font.SysFont(None, 36)
 
-# Funktsioon mängu käivitamiseks
-def run_game():
+gravitatsioon=5
+maapind_y=144
+y=100
+
+# Algusekraan
+def algus_ekraan():
+    y = 100
+    valik = list(tegelased.keys())
+    valitud = 0
+    while True:
+        screen.fill((255, 255, 255))
+        pealkiri = font.render("Vali tegelane (vasak/parem + Enter)", True, (0, 0, 0))
+        screen.blit(pealkiri, (screenX // 2 - pealkiri.get_width() // 2, 50))
+
+        for idx, key in enumerate(valik):
+            pilt = tegelased[key].pilt
+            kesk_x = screenX // 2 + (idx - valitud) * 150
+            screen.blit(pilt, (kesk_x - 25, screenY // 2 - 25))
+
+        pygame.display.flip()
+
+        for i in pygame.event.get():
+            if i.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            elif i.type == pygame.KEYDOWN:
+                if i.key == pygame.K_LEFT:
+                    valitud = (valitud - 1) % len(valik)
+                elif i.key == pygame.K_RIGHT:
+                    valitud = (valitud + 1) % len(valik)
+                elif i.key == pygame.K_RETURN:
+                    return valik[valitud]
+
+            y += gravitatsioon
+            if y > maapind_y:
+                y = maapind_y
+
+def run_game(valitud_tegelane_nimi):
+    WINNING_SCORE = 25
     mangib = True
     piltx = 0
     mellows = []
@@ -52,9 +91,10 @@ def run_game():
     skoor = 0
     mangu_algus = time.time()
 
-    valitud_tegelane_nimi = random.choice(list(tegelased.keys()))
     valitud_tegelane = tegelased[valitud_tegelane_nimi]
     x, y = 200, 100
+    maapind_y = screenY - 50
+    gravitatsioon = 5
     samm = 10
     liigub = False
 
@@ -65,19 +105,26 @@ def run_game():
     running = True
 
     while running:
+        # Tegelane langeb, kui pole maapinnal
+        if y < maapind_y:
+            y += gravitatsioon
+            if y > maapind_y:
+                y = maapind_y
         aeg = time.time()
+        if skoor >= WINNING_SCORE:
+            return (skoor, aeg - mangu_algus, True)
         if aeg - mangu_algus >= 60:
-            return skoor
+            return (skoor, aeg - mangu_algus, False)
 
         for i in pygame.event.get():
             if i.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
             elif i.type == pygame.KEYDOWN:
-                if i.key == pygame.K_UP and y > 5:
+                if i.key == pygame.K_UP and y > 0:
                     y -= samm
-                elif i.key == pygame.K_DOWN:
-                    liigub = True
+                elif i.key == pygame.K_DOWN and y < maapind_y:
+                    y += samm
                 elif i.key == pygame.K_LEFT:
                     piltx += samm
                 elif i.key == pygame.K_RIGHT:
@@ -88,31 +135,35 @@ def run_game():
                     muusika1.set_volume(0.6 if mangib else 0)
 
         if aeg >= next_mellow_time:
-            mellows.append(pygame.Rect(random.randint(100, screenX - 100), random.randint(50, screenY - 50), 50, 50))
+            mellows.append(pygame.Rect(screenX, random.randint(0, screenY - 50), 50, 50))
             next_mellow_time = aeg + random.uniform(2, 4)
 
         if aeg >= next_squid_time:
-            squids.append(pygame.Rect(random.randint(100, screenX - 100), random.randint(50, screenY - 50), 50, 50))
+            squids.append(pygame.Rect(screenX, random.randint(0, screenY - 50), 50, 50))
             next_squid_time = aeg + random.uniform(3, 5)
 
         tegelane_rect = pygame.Rect(x, y, 50, 50)
 
         for mellow in mellows[:]:
-            if tegelane_rect.colliderect(mellow):
+            speed_factor = 3 if liigub else 2
+            mellow.x -= speed_factor
+            if mellow.colliderect(tegelane_rect):
                 mellows.remove(mellow)
                 skoor += 1
+            elif mellow.x < -50:
+                mellows.remove(mellow)
 
         for squid in squids[:]:
-            if tegelane_rect.colliderect(squid):
+            speed_factor = 3 if liigub else 2
+            squid.x -= speed_factor
+            if squid.colliderect(tegelane_rect):
                 squids.remove(squid)
                 skoor -= 1
+            elif squid.x < -50:
+                squids.remove(squid)
 
-        for i in range(-1, (screenX // taust_laius) + 2):
-            screen.blit(taustapilt, (piltx + i * taust_laius, 0))
-
-        if y < screenY - 5:
-            y = min(y + 5, screenY - 5)
-            liigub = True
+        for i in range(-1, (screenX // taust_laius) + 3):
+            screen.blit(taustapilt, (piltx % taust_laius + i * taust_laius - taust_laius, 0))
 
         screen.blit(valitud_tegelane.liigub if liigub else valitud_tegelane.pilt, (x, y))
         screen.blit(heli_on if mangib else heli_off, heli_rect.topleft)
@@ -132,10 +183,13 @@ def run_game():
         pygame.display.flip()
 
 # Funktsioon lõppkuva ja restardi jaoks
-def lopuekraan(skoor):
+def lopuekraan(skoor, aeg_loppus, voidukas):
     while True:
         screen.fill((0, 0, 0))
-        tekst = font.render(f"Mäng läbi! Lõppskoor: {skoor}", True, (255, 255, 255))
+        if voidukas:
+            tekst = font.render(f"Õnnitlused! Said {skoor} punkti {int(aeg_loppus)} sek. jooksul!", True, (255, 255, 255))
+        else:
+            tekst = font.render(f"Mäng läbi! Lõppskoor: {skoor}", True, (255, 255, 255))
         restart = font.render("Vajuta R, et uuesti mängida või ESC, et väljuda", True, (200, 200, 200))
         screen.blit(tekst, (screenX // 2 - tekst.get_width() // 2, screenY // 2 - 40))
         screen.blit(restart, (screenX // 2 - restart.get_width() // 2, screenY // 2 + 10))
@@ -151,10 +205,11 @@ def lopuekraan(skoor):
                 elif i.key == pygame.K_ESCAPE:
                     return False
 
-# Mängu tsükkel koos restartiga
+# Mängu tsükkel koos algusekraani ja restartiga
 while True:
-    skoor = run_game()
-    if not lopuekraan(skoor):
+    valitud_tegelane = algus_ekraan()
+    skoor, aeg_loppus, voidukas = run_game(valitud_tegelane)
+    if not lopuekraan(skoor, aeg_loppus, voidukas):
         break
 
 pygame.quit()
