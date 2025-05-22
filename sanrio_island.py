@@ -136,11 +136,11 @@ def run_game(valitud_tegelane_nimi):
 
         if aeg >= next_mellow_time:
             mellows.append(pygame.Rect(screenX, random.randint(0, screenY - 50), 50, 50))
-            next_mellow_time = aeg + random.uniform(2, 4)
+            next_mellow_time = aeg + random.uniform(2, 3)
 
         if aeg >= next_squid_time:
             squids.append(pygame.Rect(screenX, random.randint(0, screenY - 50), 50, 50))
-            next_squid_time = aeg + random.uniform(3, 5)
+            next_squid_time = aeg + random.uniform(3, 6)
 
         tegelane_rect = pygame.Rect(x, y, 50, 50)
 
